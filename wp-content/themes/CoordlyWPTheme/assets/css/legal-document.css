@@ -1,0 +1,366 @@
+/* ==========================================================================
+ * Coordly — Legal Document (Termos de uso / Política de privacidade)
+ * Layout de 2 colunas com índice + downloads e paginação do texto.
+ * ========================================================================== */
+
+:root {
+  --cdoc-primary: #3547c8;
+  --cdoc-ink: #1f2733;
+  --cdoc-text: #324150;
+  --cdoc-muted: #8697a8;
+  --cdoc-card-bg: #ffffff;
+  --cdoc-card-border: #e7eaf0;
+  --cdoc-soft-bg: #eaedf0;
+  --cdoc-soft-bg-hover: #dfe3ea;
+  --cdoc-pager-bg: #1f2733;
+  --cdoc-radius: 14px;
+}
+
+/* O tema aplica `overflow-x: hidden` em html/body, o que computa
+ * `overflow-y: auto` e transforma o body em contêiner de rolagem — isso
+ * quebra o `position: sticky` da sidebar (o índice rola junto com o texto).
+ * `overflow-x: clip` evita a barra horizontal SEM criar contêiner de rolagem,
+ * mantendo o índice fixo enquanto só o texto rola. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Espaço para a navbar fixa */
+.coordly-doc-wrap {
+  padding-top: 100px;
+}
+
+/* ---- Grid principal ---------------------------------------------------- */
+.coordly-doc {
+  --cdoc-nav-offset: 120px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 344px;
+  gap: 40px;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+}
+
+.coordly-doc__main {
+  min-width: 0;
+}
+
+.coordly-doc__title {
+  color: var(--cdoc-ink);
+  font-weight: 700;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin: 0 0 28px;
+  scroll-margin-top: var(--cdoc-nav-offset);
+}
+
+.coordly-doc__subtitle {
+  color: var(--cdoc-muted);
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: -12px 0 24px;
+}
+
+/* ---- Conteúdo do documento -------------------------------------------- */
+.coordly-doc__page {
+  color: var(--cdoc-text);
+}
+
+.coordly-doc.is-paginated .coordly-doc__page:not(.is-active) {
+  display: none;
+}
+
+.coordly-doc__page > h1,
+.coordly-doc__page > h2,
+.coordly-doc__page > h3 {
+  color: var(--cdoc-ink);
+  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 26px);
+  line-height: 1.25;
+  margin: 40px 0 16px;
+  scroll-margin-top: var(--cdoc-nav-offset);
+}
+
+.coordly-doc__page > h1:first-child,
+.coordly-doc__page > h2:first-child,
+.coordly-doc__page > h3:first-child {
+  margin-top: 0;
+}
+
+/* Numeração destacada em azul: "1. Objeto" */
+.coordly-doc__page .cdoc-sec-num {
+  color: var(--cdoc-primary);
+  font-weight: 700;
+}
+
+.coordly-doc__page p {
+  font-size: 1rem;
+  line-height: 1.75;
+  margin: 0 0 18px;
+}
+
+.coordly-doc__page a {
+  color: var(--cdoc-primary);
+  text-decoration: none;
+}
+.coordly-doc__page a:hover {
+  text-decoration: underline;
+}
+
+/* ---- Sidebar ----------------------------------------------------------- */
+.coordly-doc__aside {
+  position: sticky;
+  top: var(--cdoc-nav-offset);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.coordly-card {
+  background: var(--cdoc-card-bg);
+  border: 1px solid var(--cdoc-card-border);
+  border-radius: var(--cdoc-radius);
+  box-shadow: 0 8px 24px rgba(31, 39, 51, 0.06);
+  padding: 24px;
+}
+
+.coordly-card__title {
+  color: var(--cdoc-ink);
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 0 0 16px;
+}
+
+.coordly-card__divider {
+  height: 1px;
+  background: var(--cdoc-card-border);
+  border: 0;
+  margin: 16px 0;
+}
+
+/* ---- Índice ------------------------------------------------------------ */
+.coordly-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coordly-toc__link {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 8px;
+  color: var(--cdoc-muted);
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.coordly-toc__link:hover {
+  color: var(--cdoc-ink);
+  background: var(--cdoc-soft-bg);
+}
+
+.coordly-toc__item.is-active .coordly-toc__link {
+  color: var(--cdoc-ink);
+  font-weight: 600;
+}
+
+.coordly-toc__num {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+/* Botão "Voltar para o topo" */
+.coordly-backtop {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--cdoc-soft-bg);
+  color: var(--cdoc-ink);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.coordly-backtop:hover {
+  background: var(--cdoc-soft-bg-hover);
+}
+.coordly-backtop svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---- Downloads --------------------------------------------------------- */
+.coordly-download {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.coordly-download__icon {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  color: var(--cdoc-primary);
+}
+.coordly-download__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.coordly-download__info {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.coordly-download__name {
+  display: block;
+  color: var(--cdoc-primary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  word-break: break-word;
+}
+.coordly-download__name:hover {
+  text-decoration: underline;
+}
+
+.coordly-download__meta {
+  display: block;
+  color: var(--cdoc-muted);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.coordly-download__btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--cdoc-soft-bg);
+  color: var(--cdoc-ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.coordly-download__btn:hover {
+  background: var(--cdoc-soft-bg-hover);
+}
+.coordly-download__btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Fallback sem PDF configurado: botão de impressão (imprimir -> salvar PDF) */
+.coordly-print-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--cdoc-soft-bg);
+  color: var(--cdoc-ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.coordly-print-btn:hover {
+  background: var(--cdoc-soft-bg-hover);
+}
+.coordly-print-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---- Paginação (pílula fixa) ------------------------------------------ */
+.coordly-doc__pager {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 1030;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--cdoc-pager-bg);
+  box-shadow: 0 10px 30px rgba(31, 39, 51, 0.25);
+}
+
+.coordly-doc.is-paginated .coordly-doc__pager {
+  display: inline-flex;
+}
+
+.coordly-pager__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+.coordly-pager__btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+}
+.coordly-pager__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.coordly-pager__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.coordly-pager__status {
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0 8px;
+  min-width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Responsivo -------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .coordly-doc {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-bottom: 100px;
+  }
+  .coordly-doc__aside {
+    position: static;
+  }
+}
+
+/* ---- Impressão (fallback "Baixar PDF") -------------------------------- */
+@media print {
+  header, footer, .coordly-doc__aside, .coordly-doc__pager { display: none !important; }
+  .coordly-doc { display: block; padding: 0; }
+  .coordly-doc.is-paginated .coordly-doc__page:not(.is-active) { display: block !important; }
+}

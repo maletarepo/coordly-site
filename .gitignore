@@ -1,0 +1,26 @@
+# Lista branca: so o codigo proprio da Coordly entra no Git.
+# WordPress core, plugins de terceiros, uploads, cache e wp-config ficam de fora
+# (sao atualizados pelo wp-admin ou contem credenciais).
+
+/*
+!/.gitignore
+!/.gitattributes
+!/.github/
+!/README.md
+
+!/wp-content/
+/wp-content/*
+
+!/wp-content/themes/
+/wp-content/themes/*
+!/wp-content/themes/CoordlyWPTheme/
+
+!/wp-content/mu-plugins/
+# Plugin gerenciado pela Hostinger: nunca versionar
+/wp-content/mu-plugins/hostinger-auto-updates.php
+
+# Arquivo de estado do deploy por FTP e lixo de sistema
+.ftp-deploy-sync-state.json
+.DS_Store
+Thumbs.db
+desktop.ini

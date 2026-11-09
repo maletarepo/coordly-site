@@ -1,0 +1,78 @@
+name: CI/CD
+
+on:
+  pull_request:
+    paths:
+      - 'wp-content/**'
+      - '.github/workflows/**'
+  push:
+    branches: [main]
+    paths:
+      - 'wp-content/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+# Nunca dois deploys ao mesmo tempo
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  lint:
+    name: Verificar sintaxe PHP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: none
+
+      - name: php -l em todos os arquivos
+        run: |
+          if ! find wp-content -type f -name '*.php' -print0 | xargs -0 -n1 php -l > lint.txt 2>&1; then
+            grep -v '^No syntax errors detected' lint.txt
+            exit 1
+          fi
+          echo "$(wc -l < lint.txt) arquivos PHP sem erros de sintaxe"
+
+  deploy:
+    name: Deploy para coordly.co (FTP)
+    needs: lint
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://coordly.co
+    steps:
+      - uses: actions/checkout@v4
+
+      # Envia so o que mudou desde o ultimo deploy (estado guardado no servidor).
+      # Arquivos que nao estao no repositorio (ex.: hostinger-auto-updates.php) nunca sao apagados.
+      - name: Tema CoordlyWPTheme
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./wp-content/themes/CoordlyWPTheme/
+          server-dir: ${{ vars.FTP_SITE_ROOT }}wp-content/themes/CoordlyWPTheme/
+
+      - name: mu-plugins
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          local-dir: ./wp-content/mu-plugins/
+          server-dir: ${{ vars.FTP_SITE_ROOT }}wp-content/mu-plugins/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            hostinger-auto-updates.php
+
+      - name: Lembrete
+        run: echo "::notice::Deploy concluido. Limpe o cache em hPanel > Avancado > Gerenciador de cache (ou LiteSpeed no wp-admin)."

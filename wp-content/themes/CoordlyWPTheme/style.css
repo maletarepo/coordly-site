@@ -1,0 +1,245 @@
+/*
+Theme Name: Coordly
+Author: Edgar
+Description: Tema Coordly WordPress
+Version: 1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: coordly-theme
+*/
+
+html,
+body {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+img {
+  pointer-events: none;
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
+/*Navbar customizada*/
+@media (max-width: 1199.98px) {
+  .coordly-navbar-mx {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .coordly-navbar {
+    background-color: white;
+    color: #3547c8;
+    transition: padding 0.3s ease, background-color 0.3s ease;
+  }
+}
+
+@media (min-width: 1200px) {
+  .coordly-navbar-mx {
+    margin-left: 3rem !important;
+    margin-right: 3rem !important;
+  }
+
+  .coordly-navbar {
+    background-color: transparent;
+    color: #ffffff;
+    transition: padding 0.3s ease, background-color 0.3s ease;
+  }
+}
+
+.coordly-navbar-scrolled {
+  background-color: white;
+  color: #3547c8;
+}
+
+/*Botões customizados*/
+.coordly-btn-primary {
+  color: white;
+  background-color: #3547c8;
+  border-radius: 6px;
+  border: 2px solid white;
+}
+
+.coordly-btn-primary:hover {
+  color: #3547c8;
+  background-color: white;
+  border: 2px solid #3547c8;
+}
+
+.coordly-btn-secondary {
+  color: #3547c8;
+  background-color: white;
+  border-radius: 6px;
+  border: 2px solid #3547c8;
+}
+
+.coordly-btn-secondary:hover {
+  color: white;
+  background-color: #3547c8;
+  border: 2px solid white;
+}
+
+/*Links customizados*/
+.coordly-nav-item:hover {
+  color: #C7C421 !important;
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.coordly-footer-link {
+  text-decoration: none;
+}
+
+.coordly-footer-link:hover {
+  text-decoration: underline;
+}
+
+/*Swiper customizado*/
+.swiper-1 .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(128, 128, 128, 0.1);
+  border-radius: 15px;
+  opacity: 1;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.swiper-1 .swiper-pagination-bullet-active {
+  width: 30px;
+  background-color: #3547c8;
+}
+
+.swiper-2 .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  opacity: 1;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  text-wrap: nowrap;
+}
+
+.swiper-2 .swiper-pagination-bullet-active {
+  width: 30px;
+  background-color: white;
+}
+
+.swiper-4 .swiper-pagination {
+  position: static;
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.swiper-4 .swiper-pagination-bullet {
+  width: auto;
+  height: auto;
+  text-align: center;
+  font-size: 60px;
+  color: rgba(0, 0, 0, 0.1);
+  opacity: 1;
+  background: rgba(0, 0, 0, 0);
+  transition: color 0.3s ease;
+}
+
+.swiper-4 .swiper-pagination-bullet-active {
+  color: #3547c8;
+}
+
+.coordly-bullet-text {
+  font-size: x-large;
+  color: rgba(0, 0, 0, 0.1);
+}
+
+.swiper-4 .swiper-pagination-bullet-active .coordly-bullet-text {
+  color: #495057;
+}
+
+/*Hero customizada*/
+@media (max-width: 1199.98px) {
+  .coordly-hero {
+    position: absolute;
+    height: 80svh;
+    left: 60%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+  }
+
+  .coordly-box-disciplinas {
+    display: none;
+  }
+
+  .coordly-dots-h {
+    position: absolute;
+    height: 7svh;
+    left: 45%;
+    top: 95%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+  }
+
+  .coordly-dots-v {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .coordly-hero {
+    position: absolute;
+    height: 80svh;
+    left: 60%;
+    top: 60%;
+    transform: translate(50%, -50%);
+    z-index: 5;
+  }
+
+  .coordly-box-disciplinas {
+    position: absolute;
+    height: 27svh;
+    left: 100%;
+    top: 37%;
+    transform: translate(-20%, -50%);
+    z-index: 4;
+  }
+
+  .coordly-dots-h {
+    position: absolute;
+    height: 7svh;
+    left: 45%;
+    top: 95%;
+    transform: translate(85%, -50%);
+    z-index: 3;
+  }
+
+  .coordly-dots-v {
+    position: absolute;
+    height: 50svh;
+    left: 100%;
+    top: 45%;
+    transform: translate(700%, -50%);
+    z-index: 2;
+  }
+}
+
+/*Post thumbnail customizada*/
+.post-thumbnail {
+  width: 100%;
+  overflow: hidden;
+}
+
+.post-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/*Dropdown customizada*/
+.dropdown-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
