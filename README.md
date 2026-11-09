@@ -26,7 +26,7 @@ Deploy manual: aba **Actions** > CI/CD > *Run workflow*.
 | Secret | `FTP_HOST` | Nome do servidor `srvNNNN.hstgr.io` (hPanel > Plano > Detalhes do servidor: server1549 → `srv1549.hstgr.io`). Não use o IP: o certificado FTPS é `*.hstgr.io` e só valida com esse nome. |
 | Secret | `FTP_USER` | Usuário FTP |
 | Secret | `FTP_PASSWORD` | Senha FTP |
-| Variable | `FTP_SITE_ROOT` | Opcional. Caminho, a partir do login FTP, até o `public_html`, terminando em `/`. Padrão: `public_html/` (o FTP da Hostinger abre na pasta acima do `public_html`). Antes de enviar, o deploy confere se o tema existe nesse caminho. |
+| Variable | `FTP_SITE_ROOT` | Opcional. Caminho, a partir do login FTP, até o `public_html`, terminando em `/`. Sem ela, o deploy testa a raiz do login, `public_html/` e `domains/coordly.co/public_html/` e usa o caminho onde o tema já existe. |
 | Variable | `FTP_PROTOCOL` | Opcional: `ftps` (padrão) ou `ftp` se o FTPS falhar |
 
 **Settings > Environments > `production`**: se o seu plano do GitHub permitir, adicione *Required reviewers* para que cada deploy espere a sua aprovação.

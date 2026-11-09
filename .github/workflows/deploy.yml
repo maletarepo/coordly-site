@@ -46,33 +46,45 @@ jobs:
       name: production
       url: https://coordly.co
     env:
-      # Raiz do site a partir do login FTP. Na Hostinger o FTP abre um nivel acima do public_html.
-      SITE_ROOT: ${{ vars.FTP_SITE_ROOT || 'public_html/' }}
       PROTOCOL: ${{ vars.FTP_PROTOCOL || 'ftps' }}
     steps:
       - uses: actions/checkout@v5
 
-      # Trava de seguranca: so publica se o tema ja existir no destino informado.
-      # Evita criar uma arvore wp-content no lugar errado se SITE_ROOT estiver incorreto.
+      # Trava de seguranca: descobre a raiz do site a partir do login FTP e so publica
+      # se o tema ja existir la (style.css). Assim nunca cria wp-content no lugar errado.
+      # FTP_SITE_ROOT (variavel opcional) fixa a raiz; sem ela, testa os caminhos comuns da Hostinger.
       - name: Conferir destino no servidor
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          ROOT_OVERRIDE: ${{ vars.FTP_SITE_ROOT }}
         run: |
           HOST="${FTP_HOST#ftp://}"; HOST="${HOST%/}"
           TLS=""; [ "$PROTOCOL" = "ftps" ] && TLS="--ssl-reqd"
-          DIR="${SITE_ROOT%/}/wp-content/themes/CoordlyWPTheme/"
-          if ! LIST=$(curl -sS $TLS --list-only --user "$FTP_USER:$FTP_PASSWORD" "ftp://$HOST/$DIR"); then
-            echo "::error::Nao consegui listar '$DIR' via $PROTOCOL. Confira FTP_SITE_ROOT / FTP_PROTOCOL."
-            exit 1
+          ftp_ls() { curl -sS $TLS --list-only --user "$FTP_USER:$FTP_PASSWORD" "ftp://$HOST/$1" | tr -d '\r'; }
+
+          if [ -n "$ROOT_OVERRIDE" ]; then
+            CANDIDATES=("${ROOT_OVERRIDE%/}/")
+          else
+            CANDIDATES=("" "public_html/" "domains/coordly.co/public_html/")
           fi
-          if ! printf '%s\n' "$LIST" | grep -qx 'style.css'; then
-            echo "::error::'$DIR' nao contem style.css. Deploy cancelado para nao publicar no lugar errado."
-            exit 1
-          fi
-          echo "Destino confirmado: $DIR"
-          echo "FTP_SERVER=$HOST" >> "$GITHUB_ENV"
+
+          for ROOT in "${CANDIDATES[@]}"; do
+            DIR="${ROOT}wp-content/themes/CoordlyWPTheme/"
+            if ftp_ls "$DIR" 2>/dev/null | grep -qx 'style.css'; then
+              echo "Destino confirmado: /${DIR}"
+              echo "SITE_ROOT=${ROOT}" >> "$GITHUB_ENV"
+              echo "FTP_SERVER=${HOST}" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            echo "Nao e aqui: /${DIR}"
+          done
+
+          echo "Pastas na raiz do login FTP:"
+          ftp_ls "" || true
+          echo "::error::Nao encontrei o tema em nenhum caminho testado. Deploy cancelado; defina FTP_SITE_ROOT."
+          exit 1
 
       # Envia so o que mudou desde o ultimo deploy (estado guardado no servidor).
       # Arquivos que nao estao no repositorio (ex.: hostinger-auto-updates.php) nunca sao apagados.
