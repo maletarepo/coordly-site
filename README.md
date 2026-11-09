@@ -36,5 +36,6 @@ Deploy manual: aba **Actions** > CI/CD > *Run workflow*.
 ## Observações
 
 - `hostinger-auto-updates.php` (mu-plugin da Hostinger) existe só no servidor. Ele não é versionado e o deploy nunca o apaga.
-- O deploy guarda um `.ftp-deploy-sync-state.json` em cada pasta de destino no servidor. Não apague esse arquivo, senão o próximo deploy reenvia tudo.
+- O deploy guarda o último commit publicado em `wp-content/themes/CoordlyWPTheme/.deploy-rev` no servidor e envia só o que mudou no Git desde então. Se esse arquivo sumir, o próximo deploy reenvia tudo (sem problema).
+- O envio usa curl com FTPS e certificado validado. A ação FTP-Deploy-Action não funciona com o FTPS da Hostinger (ECONNRESET no canal de dados).
 - Fim de linha: LF (`.gitattributes`), igual ao servidor.
