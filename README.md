@@ -26,7 +26,7 @@ Deploy manual: aba **Actions** > CI/CD > *Run workflow*.
 | Secret | `FTP_HOST` | Host FTP (hPanel > Arquivos > Contas FTP) |
 | Secret | `FTP_USER` | Usuário FTP |
 | Secret | `FTP_PASSWORD` | Senha FTP |
-| Variable | `FTP_SITE_ROOT` | Caminho, a partir da raiz do FTP, até o `public_html` do site, terminando em `/`. Deixe vazio se o FTP já abre direto no `public_html`. |
+| Variable | `FTP_SITE_ROOT` | Opcional. Caminho, a partir do login FTP, até o `public_html`, terminando em `/`. Padrão: `public_html/` (o FTP da Hostinger abre na pasta acima do `public_html`). Antes de enviar, o deploy confere se o tema existe nesse caminho. |
 | Variable | `FTP_PROTOCOL` | Opcional: `ftps` (padrão) ou `ftp` se o FTPS falhar |
 
 **Settings > Environments > `production`**: se o seu plano do GitHub permitir, adicione *Required reviewers* para que cada deploy espere a sua aprovação.
