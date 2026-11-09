@@ -23,7 +23,7 @@ Deploy manual: aba **Actions** > CI/CD > *Run workflow*.
 
 | Tipo | Nome | Valor |
 |---|---|---|
-| Secret | `FTP_HOST` | Host FTP (hPanel > Arquivos > Contas FTP) |
+| Secret | `FTP_HOST` | Nome do servidor `srvNNNN.hstgr.io` (hPanel > Plano > Detalhes do servidor: server1549 → `srv1549.hstgr.io`). Não use o IP: o certificado FTPS é `*.hstgr.io` e só valida com esse nome. |
 | Secret | `FTP_USER` | Usuário FTP |
 | Secret | `FTP_PASSWORD` | Senha FTP |
 | Variable | `FTP_SITE_ROOT` | Opcional. Caminho, a partir do login FTP, até o `public_html`, terminando em `/`. Padrão: `public_html/` (o FTP da Hostinger abre na pasta acima do `public_html`). Antes de enviar, o deploy confere se o tema existe nesse caminho. |

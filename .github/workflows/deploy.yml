@@ -83,6 +83,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ${{ env.PROTOCOL }}
+          security: strict
           local-dir: ./wp-content/themes/CoordlyWPTheme/
           server-dir: ${{ env.SITE_ROOT }}wp-content/themes/CoordlyWPTheme/
 
@@ -93,6 +94,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ${{ env.PROTOCOL }}
+          security: strict
           local-dir: ./wp-content/mu-plugins/
           server-dir: ${{ env.SITE_ROOT }}wp-content/mu-plugins/
           exclude: |
