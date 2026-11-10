@@ -63,18 +63,10 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           ROOT_OVERRIDE: ${{ vars.FTP_SITE_ROOT }}
           SITE_URL: ${{ vars.SITE_URL || 'https://coordly.co' }}
-          FTP_IP_FROM: ${{ vars.FTP_IP_FROM || 'ftp.coordly.co' }}
         run: |
           HOST="${FTP_HOST#ftp://}"; HOST="${HOST%/}"
           TLS=""; [ "$PROTOCOL" = "ftps" ] && TLS="--ssl-reqd"
-          # O certificado FTPS e *.hstgr.io: o TLS continua validado pelo nome em FTP_HOST,
-          # mas a conexao vai para o IP do servidor do site (o de ftp.coordly.co, mostrado no hPanel).
-          # srv1549.hstgr.io aponta para outra maquina, com uma copia antiga que o site nao serve.
-          FTP_IP="$(getent ahostsv4 "$FTP_IP_FROM" | awk 'NR==1{print $1}')"
-          [ -n "$FTP_IP" ] || { echo "::error::Nao resolvi $FTP_IP_FROM"; exit 1; }
-          echo "Conectando em $HOST (TLS) via $FTP_IP ($FTP_IP_FROM)"
-          CONNECT="$HOST:21:$FTP_IP:21"
-          CURL=(curl -sS $TLS --connect-to "$CONNECT" --user "$FTP_USER:$FTP_PASSWORD")
+          CURL=(curl -sS $TLS --user "$FTP_USER:$FTP_PASSWORD")
           ftp_ls() { "${CURL[@]}" --list-only "ftp://$HOST/$1" | tr -d '\r'; }
           THEME="wp-content/themes/CoordlyWPTheme/"
 
@@ -101,7 +93,6 @@ jobs:
               echo "Destino confirmado (o site serve esta pasta): /${DIR}"
               echo "SITE_ROOT=${ROOT}" >> "$GITHUB_ENV"
               echo "FTP_SERVER=${HOST}" >> "$GITHUB_ENV"
-              echo "FTP_CONNECT=${CONNECT}" >> "$GITHUB_ENV"
               exit 0
             fi
             echo "Tem o tema, mas NAO e a pasta servida por ${SITE_URL}: /${DIR}"
@@ -127,7 +118,7 @@ jobs:
           PATHS=(wp-content/themes/CoordlyWPTheme wp-content/mu-plugins)
           THEME_REMOTE="${SITE_ROOT}wp-content/themes/CoordlyWPTheme"
           TLS=""; [ "$PROTOCOL" = "ftps" ] && TLS="--ssl-reqd"
-          CURL=(curl -sS $TLS --connect-to "$FTP_CONNECT" --user "$FTP_USER:$FTP_PASSWORD" --retry 2)
+          CURL=(curl -sS $TLS --user "$FTP_USER:$FTP_PASSWORD" --retry 2)
           enc() { python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1],safe="/"))' "$1"; }
 
           PREV=$("${CURL[@]}" "ftp://$FTP_SERVER/$(enc "$THEME_REMOTE/.deploy-rev")" 2>/dev/null | tr -d '\r\n ' || true)
