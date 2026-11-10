@@ -53,7 +53,8 @@ jobs:
           fetch-depth: 0   # historico completo para comparar com o ultimo deploy
 
       # Trava de seguranca: descobre a raiz do site a partir do login FTP e so publica
-      # se o tema ja existir la (style.css). Assim nunca cria wp-content no lugar errado.
+      # numa pasta que o site realmente serve. Para cada caminho candidato com o tema (style.css),
+      # grava um arquivo de teste e busca esse arquivo por HTTPS em SITE_URL; so aceita se ele aparecer.
       # FTP_SITE_ROOT (variavel opcional) fixa a raiz; sem ela, testa os caminhos comuns da Hostinger.
       - name: Conferir destino no servidor
         env:
@@ -61,10 +62,13 @@ jobs:
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           ROOT_OVERRIDE: ${{ vars.FTP_SITE_ROOT }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://coordly.co' }}
         run: |
           HOST="${FTP_HOST#ftp://}"; HOST="${HOST%/}"
           TLS=""; [ "$PROTOCOL" = "ftps" ] && TLS="--ssl-reqd"
-          ftp_ls() { curl -sS $TLS --list-only --user "$FTP_USER:$FTP_PASSWORD" "ftp://$HOST/$1" | tr -d '\r'; }
+          CURL=(curl -sS $TLS --user "$FTP_USER:$FTP_PASSWORD")
+          ftp_ls() { "${CURL[@]}" --list-only "ftp://$HOST/$1" | tr -d '\r'; }
+          THEME="wp-content/themes/CoordlyWPTheme/"
 
           if [ -n "$ROOT_OVERRIDE" ]; then
             CANDIDATES=("${ROOT_OVERRIDE%/}/")
@@ -72,20 +76,32 @@ jobs:
             CANDIDATES=("" "public_html/" "domains/coordly.co/public_html/")
           fi
 
+          TOKEN="$(cat /proc/sys/kernel/random/uuid)"
+          PROBE="deploy-probe-${GITHUB_RUN_ID}.txt"
+          printf '%s' "$TOKEN" > "$PROBE"
+
           for ROOT in "${CANDIDATES[@]}"; do
-            DIR="${ROOT}wp-content/themes/CoordlyWPTheme/"
-            if ftp_ls "$DIR" 2>/dev/null | grep -qx 'style.css'; then
-              echo "Destino confirmado: /${DIR}"
+            DIR="${ROOT}${THEME}"
+            if ! ftp_ls "$DIR" 2>/dev/null | grep -qx 'style.css'; then
+              echo "Sem o tema: /${DIR}"
+              continue
+            fi
+            "${CURL[@]}" -T "$PROBE" "ftp://$HOST/${DIR}${PROBE}"
+            GOT="$(curl -sS -L --max-time 20 -H 'Cache-Control: no-cache' "${SITE_URL%/}/${THEME}${PROBE}?nocache=$TOKEN" || true)"
+            "${CURL[@]}" -o /dev/null -Q "*DELE ${DIR}${PROBE}" "ftp://$HOST/" || true
+            if [ "$GOT" = "$TOKEN" ]; then
+              echo "Destino confirmado (o site serve esta pasta): /${DIR}"
               echo "SITE_ROOT=${ROOT}" >> "$GITHUB_ENV"
               echo "FTP_SERVER=${HOST}" >> "$GITHUB_ENV"
               exit 0
             fi
-            echo "Nao e aqui: /${DIR}"
+            echo "Tem o tema, mas NAO e a pasta servida por ${SITE_URL}: /${DIR}"
           done
 
           echo "Pastas na raiz do login FTP:"
           ftp_ls "" || true
-          echo "::error::Nao encontrei o tema em nenhum caminho testado. Deploy cancelado; defina FTP_SITE_ROOT."
+          for d in public_html domains; do echo "--- /$d:"; ftp_ls "$d/" 2>&1 | head -50 || true; done
+          echo "::error::Nenhum caminho testado e servido por ${SITE_URL}. Deploy cancelado; defina FTP_SITE_ROOT com o caminho certo."
           exit 1
 
       # Envia so o que mudou no Git desde o ultimo deploy. O commit publicado fica em
