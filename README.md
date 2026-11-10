@@ -24,7 +24,7 @@ Deploy manual: aba **Actions** > CI/CD > *Run workflow*.
 | Tipo | Nome | Valor |
 |---|---|---|
 | Secret | `FTP_HOST` | Nome do servidor `srvNNNN.hstgr.io` (hPanel > Plano > Detalhes do servidor: server1549 → `srv1549.hstgr.io`). Não use o IP: o certificado FTPS é `*.hstgr.io` e só valida com esse nome. |
-| Secret | `FTP_USER` | Usuário FTP |
+| Secret | `FTP_USER` | Usuário da **conta FTP principal** (`u443637790`, hPanel > Contas FTP > Acesso FTP). Não use `u443637790.maleta78wp1`: ela fica presa na cópia aninhada `public_html/public_html`, que não é a pasta servida. |
 | Secret | `FTP_PASSWORD` | Senha FTP |
 | Variable | `FTP_SITE_ROOT` | Opcional. Caminho, a partir do login FTP, até o `public_html`, terminando em `/`. Sem ela, o deploy testa a raiz do login, `public_html/` e `domains/coordly.co/public_html/` e usa o caminho onde o tema já existe. |
 | Variable | `SITE_URL` | Opcional: endereço público do site (padrão `https://coordly.co`), usado para confirmar que a pasta do FTP é a que o site serve |
