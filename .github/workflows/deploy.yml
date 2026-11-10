@@ -73,7 +73,8 @@ jobs:
           if [ -n "$ROOT_OVERRIDE" ]; then
             CANDIDATES=("${ROOT_OVERRIDE%/}/")
           else
-            CANDIDATES=("" "public_html/" "domains/coordly.co/public_html/")
+            # "../": o login FTP abre numa copia aninhada (public_html/public_html); a pasta servida e a de cima.
+            CANDIDATES=("" "../" "public_html/" "domains/coordly.co/public_html/")
           fi
 
           TOKEN="$(cat /proc/sys/kernel/random/uuid)"
