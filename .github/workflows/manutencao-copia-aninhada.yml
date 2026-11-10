@@ -32,6 +32,8 @@ jobs:
           ls_l() { "${C[@]}" "ftp://$HOST/$1" 2>/dev/null | tr -d '\r' | awk '$9!="." && $9!=".." {t=substr($1,1,1); n=$9; for(i=10;i<=NF;i++) n=n" "$i; print t"\t"$5"\t"n}'; }
 
           # Confere a raiz do login: precisa ter public_html com o site e a copia dentro
+          echo "LIST bruto de /$LIVE (5 linhas):"; "${C[@]}" "ftp://$HOST/$LIVE" 2>&1 | head -5 || true
+          echo "Interpretado:"; ls_l "$LIVE" | head -5 || true
           ls_l "$LIVE" | cut -f3 | grep -qx 'wp-config.php' || { echo "::error::public_html do site nao encontrado"; exit 1; }
           ls_l "$NESTED" | cut -f3 | grep -qx 'wp-config-local.php' || { echo "::error::copia aninhada nao encontrada (ja movida?)"; exit 1; }
           ls_l "" | cut -f3 | grep -qx "$DEST" && { echo "::error::$DEST ja existe"; exit 1; }
