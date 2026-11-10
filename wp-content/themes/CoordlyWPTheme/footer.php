@@ -95,17 +95,31 @@
                                         height="96" />
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a
-                                    target="_blank">
-                                    <img
-                                        src="<?php echo get_template_directory_uri(); ?>/assets/img/logo-microsoft-startup.svg"
-                                        alt="MS logo"
-                                        loading="lazy"
-                                        height="64" />
-                                </a>
-                            </li>
                         </ul>
+                    </div>
+                    <?php /* Apoio Finep/MCTI/FNDCT: exigido pelo Termo de Outorga nº 2657 (FAPEG/Tecnova III),
+                             Cláusula Sexta, item 2, alíneas "l" (texto) e "m" (banner com link). Não remover. */ ?>
+                    <div class="p-0 d-flex flex-column apoio-finep">
+                        <h5 class="mb-3"><?php echo esc_html( coordly_t( 'Apoio financeiro', 'Financial support', 'Apoyo financiero' ) ); ?></h5>
+                        <a class="apoio-finep__banner" href="https://www.finep.gov.br" target="_blank" rel="noopener"
+                           title="Finep - Inovação e Pesquisa">
+                            <picture>
+                                <source media="(max-width: 600px)"
+                                        srcset="<?php echo get_template_directory_uri(); ?>/assets/img/finep/banner_finep_site_clientes234x60.png"
+                                        width="234" height="60">
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/img/finep/banner_finep_site_clientes468x60.png"
+                                     width="468" height="60"
+                                     alt="<?php echo esc_attr( coordly_t( 'Finep - Inovação e Pesquisa. Acesse o portal da Finep.', 'Finep - Innovation and Research. Visit the Finep website.', 'Finep - Innovación e Investigación. Visite el portal de Finep.' ) ); ?>"
+                                     loading="lazy" />
+                            </picture>
+                        </a>
+                        <p class="apoio-finep__texto mt-3 mb-0">
+                            <?php echo wp_kses( coordly_t(
+                                'O projeto <strong>Maleta do Engenheiro (Coordly)</strong> conta com apoio financeiro da <strong>Finep</strong> e do <strong>Ministério da Ciência, Tecnologia e Inovação</strong>, com recursos do <strong>FNDCT</strong>, por meio do Programa Tecnova III, operado pela FAPEG.',
+                                'The <strong>Maleta do Engenheiro (Coordly)</strong> project receives financial support from <strong>Finep</strong> and the <strong>Brazilian Ministry of Science, Technology and Innovation (MCTI)</strong>, with resources from <strong>FNDCT</strong>, through the Tecnova III Program, operated by FAPEG.',
+                                'El proyecto <strong>Maleta do Engenheiro (Coordly)</strong> cuenta con apoyo financiero de <strong>Finep</strong> y del <strong>Ministerio de Ciencia, Tecnología e Innovación de Brasil (MCTI)</strong>, con recursos del <strong>FNDCT</strong>, a través del Programa Tecnova III, operado por FAPEG.'
+                            ), [ 'strong' => [] ] ); ?>
+                        </p>
                     </div>
                     <div class="p-0 text-nowrap d-flex flex-column">
                         <h5 class="mb-3">Baixe nossos apps</h5>

@@ -132,6 +132,22 @@ Hoje, a <spam class="coordly-text-blue">Coordly</spam> se posiciona como uma ref
             </div>
         </div>
 
+		<?php /* Apoio Finep/MCTI/FNDCT (Termo de Outorga nº 2657, alínea "l"). Não remover. */ ?>
+		<div class="row mx-0" style="background-color: #F7F7F7;">
+			<div class="col d-flex justify-content-center px-0 pb-5 px-lg-5 mx-5">
+				<figure class="apoio-finep__assinatura m-0 d-flex flex-column align-items-center">
+					<figcaption>Apoio financeiro</figcaption>
+					<a href="https://www.finep.gov.br" target="_blank" rel="noopener">
+						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/finep/assinatura-finep-mcti-horizontal-colorido.png"
+							 alt="Finep e Ministério da Ciência, Tecnologia e Inovação" width="388" height="56" loading="lazy">
+					</a>
+					<p class="mt-3 mb-0 text-center" style="color: #777E86; max-width: 640px; font-size: 14px;">
+						O projeto Maleta do Engenheiro (Coordly) conta com apoio financeiro da Finep e do Ministério da Ciência, Tecnologia e Inovação, com recursos do FNDCT, por meio do Programa Tecnova III, operado pela FAPEG.
+					</p>
+				</figure>
+			</div>
+		</div>
+
 		<div class="row mx-0" style="background-color: #F7F7F7;">
 			<div class="col d-flex flex-column align-items-center justify-content-center p-0 pb-5 px-lg-5 m-5 gap-5">
 				<h2 class="coordly-text-dark fw-bold custom-font-size-2 text-center" style="max-width: 800px;">

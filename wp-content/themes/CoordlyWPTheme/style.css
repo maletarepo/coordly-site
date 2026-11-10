@@ -243,3 +243,51 @@ img {
   outline: none;
   box-shadow: none;
 }
+
+/* Apoio Finep/MCTI/FNDCT no rodapé (Termo de Outorga nº 2657, alíneas "l" e "m"). Não remover. */
+.apoio-finep {
+  max-width: 468px;
+}
+
+.apoio-finep__banner {
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.apoio-finep__banner img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.apoio-finep__texto {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.apoio-finep__texto strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Assinatura Finep + MCTI na página Sobre */
+.apoio-finep__assinatura {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.apoio-finep__assinatura figcaption {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.apoio-finep__assinatura img {
+  display: block;
+  width: 388px;
+  max-width: 100%;
+  height: auto;
+}
