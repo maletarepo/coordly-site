@@ -89,6 +89,24 @@ body {
   margin-top: 0;
 }
 
+/* Subtítulo dentro de uma seção (ex.: "Como solicitar a exclusão dos seus dados") */
+.coordly-doc__page > h3.cdoc-subheading {
+  font-size: clamp(17px, 1.8vw, 20px);
+  margin: 32px 0 12px;
+}
+
+/* Âncoras internas (ex.: #exclusao-de-dados) param abaixo do menu fixo */
+.coordly-doc__page [id] {
+  scroll-margin-top: var(--cdoc-nav-offset);
+}
+
+/* "Última atualização: dd/mm/aaaa" logo abaixo do título */
+.coordly-doc__page .coordly-doc__updated {
+  color: var(--cdoc-muted);
+  font-size: 0.95rem;
+  margin: -12px 0 24px;
+}
+
 /* Numeração destacada em azul: "1. Objeto" */
 .coordly-doc__page .cdoc-sec-num {
   color: var(--cdoc-primary);
