@@ -299,9 +299,53 @@ function coordly_legal_sentence_case( string $str ): string {
     if ( function_exists( 'mb_strtolower' ) ) {
         $lower = mb_strtolower( $str, 'UTF-8' );
         $first = mb_strtoupper( mb_substr( $lower, 0, 1, 'UTF-8' ), 'UTF-8' );
-        return $first . mb_substr( $lower, 1, null, 'UTF-8' );
+        $out   = $first . mb_substr( $lower, 1, null, 'UTF-8' );
+    } else {
+        $out = ucfirst( strtolower( $str ) );
     }
-    return ucfirst( strtolower( $str ) );
+    // Siglas e marcas que mantêm a grafia própria ("lgpd" -> "LGPD").
+    $keep = apply_filters( 'coordly_legal_keep_case', array( 'LGPD', 'WhatsApp' ) );
+    foreach ( $keep as $word ) {
+        $out = preg_replace( '/\b' . preg_quote( $word, '/' ) . '\b/iu', $word, $out );
+    }
+    return $out;
+}
+
+/**
+ * Texto do documento versionado no tema: legal/{slug}.html.
+ * Quando o arquivo existe, ele substitui o conteúdo da página no banco.
+ *
+ * @return string|null  HTML do documento ou null se não houver arquivo.
+ */
+function coordly_legal_versioned_content( int $post_id ) {
+    $slug = (string) get_post_field( 'post_name', $post_id );
+    if ( $slug === '' || ! preg_match( '/^[a-z0-9-]+$/', $slug ) ) {
+        return null;
+    }
+    $file = get_template_directory() . '/legal/' . $slug . '.html';
+    if ( ! is_readable( $file ) ) {
+        return null;
+    }
+    $html = (string) file_get_contents( $file );
+    return trim( $html ) !== '' ? $html : null;
+}
+
+/**
+ * PDF versionado no tema, por página. Tem prioridade sobre o custom field
+ * `documento_pdf`; os PDFs antigos continuam na biblioteca de mídia.
+ *
+ * @return string|null  Nome do arquivo em legal/ ou null.
+ */
+function coordly_legal_versioned_pdf_file( int $post_id ) {
+    $files = apply_filters( 'coordly_legal_versioned_pdfs', array(
+        'privacy-policies' => 'Política_de_Privacidade_11-26.pdf',
+        'terms-of-use'     => 'Termos_de_Uso_11-26.pdf',
+    ) );
+    $slug = (string) get_post_field( 'post_name', $post_id );
+    if ( empty( $files[ $slug ] ) ) {
+        return null;
+    }
+    return is_readable( get_template_directory() . '/legal/' . $files[ $slug ] ) ? $files[ $slug ] : null;
 }
 
 /**
@@ -316,6 +360,17 @@ function coordly_legal_sentence_case( string $str ): string {
  * @return array|null  [ url, name, size, date ] ou null se não configurado.
  */
 function coordly_legal_pdf( int $post_id ) {
+    $versioned_pdf = coordly_legal_versioned_pdf_file( $post_id );
+    if ( $versioned_pdf !== null ) {
+        $path = get_template_directory() . '/legal/' . $versioned_pdf;
+        return array(
+            'url'  => get_template_directory_uri() . '/legal/' . rawurlencode( $versioned_pdf ),
+            'name' => $versioned_pdf,
+            'size' => size_format( filesize( $path ), 1 ),
+            'date' => date_i18n( 'd/m/Y', filemtime( $path ) ),
+        );
+    }
+
     $meta = get_post_meta( $post_id, 'documento_pdf', true );
     $meta = apply_filters( 'coordly_legal_pdf_meta', $meta, $post_id );
 
@@ -467,7 +522,10 @@ function coordly_legal_parse_content( string $raw ): array {
  * Renderiza o documento legal completo (deve ser chamado dentro do loop).
  */
 function coordly_render_legal_document() {
-    $parsed   = coordly_legal_parse_content( apply_filters( 'the_content', get_the_content() ) );
+    $versioned = coordly_legal_versioned_content( (int) get_the_ID() );
+    $parsed    = coordly_legal_parse_content(
+        $versioned !== null ? $versioned : apply_filters( 'the_content', get_the_content() )
+    );
     $title    = $parsed['title'] !== '' ? $parsed['title'] : get_the_title();
     $sections = $parsed['sections'];
 
