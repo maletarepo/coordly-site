@@ -289,6 +289,35 @@ function coordly_legal_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'coordly_legal_enqueue_assets' );
 
 /**
+ * Descrição do Yoast (og:description) nas páginas legais: o Yoast gera o
+ * resumo a partir do conteúdo da página no banco, que não é mais usado.
+ * Aqui ela vem do primeiro parágrafo do texto versionado em legal/{slug}.html.
+ */
+function coordly_legal_og_description( $desc ) {
+    if ( ! is_singular( 'page' ) || ! is_page_template( coordly_legal_templates() ) ) {
+        return $desc;
+    }
+    $html = coordly_legal_versioned_content( (int) get_queried_object_id() );
+    if ( $html === null ) {
+        return $desc;
+    }
+    if ( ! preg_match_all( '#<p(\s[^>]*)?>(.*?)</p>#su', $html, $m, PREG_SET_ORDER ) ) {
+        return $desc;
+    }
+    foreach ( $m as $p ) {
+        if ( strpos( (string) $p[1], 'coordly-doc__updated' ) !== false ) {
+            continue;
+        }
+        $text = trim( preg_replace( '/\s+/u', ' ', wp_strip_all_tags( $p[2] ) ) );
+        if ( $text !== '' ) {
+            return wp_html_excerpt( $text, 300, ' […]' );
+        }
+    }
+    return $desc;
+}
+add_filter( 'wpseo_opengraph_desc', 'coordly_legal_og_description' );
+
+/**
  * Sentence case com suporte a UTF-8: "1. OBJETO" -> "Objeto".
  */
 function coordly_legal_sentence_case( string $str ): string {
