@@ -25,7 +25,7 @@
                         <li class="nav-item">
                             <a
                                 class="nav-link p-0 text-white coordly-footer-link"
-                                href="mailto:romeu@leb.eng.br">romeu@coordly.co</a>
+                                href="mailto:romeu@coordly.co">romeu@coordly.co</a>
                         </li>
                         <li class="nav-item">
                             <a
